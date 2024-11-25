@@ -9,7 +9,6 @@ def home():
     return render_template('index.html')  # Renderiza o arquivo index.html
 
 @app.route('/chat', methods=['POST'])
-@app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
     user_message = data.get('message', '')
@@ -37,8 +36,3 @@ def chat():
         reply = "Desculpe, houve um problema ao processar sua mensagem."
 
     return jsonify({'reply': reply})
-
-
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5001)
-
