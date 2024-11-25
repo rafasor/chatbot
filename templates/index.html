@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trabalho A3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+        }
+        .chat-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .chat-header img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .chat-header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        .chat-box {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .message.user {
+            text-align: right;
+            color: #007bff;
+        }
+        .message.bot {
+            text-align: left;
+            color: #555;
+        }
+        input {
+            width: calc(100% - 120px);
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+    margin: 10px 0;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    word-wrap: break-word; /* Permite quebra de palavras */
+    white-space: pre-wrap; /* Mantém quebras de linha do texto */
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.message.user {
+    background-color: #d1ecf1; /* Azul claro */
+    color: #0c5460;
+    align-self: flex-end;
+    text-align: right;
+    border-top-right-radius: 0; /* Forma um balão para usuário */
+}
+
+.message.bot {
+    background-color: #f8d7da; /* Vermelho claro */
+    color: #721c24;
+    align-self: flex-start;
+    text-align: left;
+    border-top-left-radius: 0; /* Forma um balão para chatbot */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre o ícone e o texto */
+}
+
+.chat-box {
+    height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column; /* Permite alinhar mensagens verticalmente */
+}
+
+.message img {
+    border-radius: 50%; /* Ícone redondo */
+    width: 30px;
+    height: 30px;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="/static/—Pngtree—smart chatbot cartoon clipart_9015126.png" alt="Chatbot Icon">
+            <h1>Chatbot</h1>
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <form id="chat-form">
+            <input type="text" id="message-input" placeholder="Digite sua mensagem..." required />
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+    
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = messageInput.value.trim();
+            if (!userMessage) return;
+    
+            appendMessage(userMessage, 'user');
+    
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: userMessage })
+                });
+                const data = await response.json();
+                appendMessage(data.reply, 'bot');
+            } catch (error) {
+                appendMessage("Erro ao conectar com o servidor.", 'bot');
+            }
+            messageInput.value = '';
+        });
+    
+        function appendMessage(message, sender) {
+            const div = document.createElement('div');
+            div.classList.add('message', sender);
+    
+            if (sender === 'bot') {
+                // Adiciona ícone para o chatbot
+                const img = document.createElement('img');
+                img.src = "/static/—Pngtree—smart chatbot cartoon clipart_9015126.png";
+                img.alt = "Chatbot Icon";
+    
+                const text = document.createElement('span');
+                text.textContent = message;
+    
+                div.appendChild(img);
+                div.appendChild(text);
+            } else {
+                div.textContent = message;
+            }
+    
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight; // Rola automaticamente para a última mensagem
+        }
+    </script>
+    
+</body>
+</html>
